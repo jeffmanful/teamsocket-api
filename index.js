@@ -40,7 +40,7 @@ io.on('connection', function(socket){
             socket.send(socket.id);
             // if not then make this socket the host
             host = socket.id;
-            init = true
+            init = true;
 
         } else {
             host = io.sockets.adapter.rooms[room].host
@@ -56,13 +56,16 @@ io.on('connection', function(socket){
     });
 
     socket.on('join room', function(data) {
-        // connect this socket to a room
-        socket.join(data.room);
-        
+        // check if the user is in the room.
+        if (io.sockets.adapter.rooms[room].includes(data.user)) {
+            return data;
+        }
         // add this user to socket users
+        socket.join(data.room);
         io.sockets.adapter.rooms[room].users.push(data.username);
         // add to rooms hash
         userRooms[data.room].users.push(data.username);
+        socket.to(data.room).emit(`user ${data.user.username} just joined the room`, data.user);
     })
 
     socket.on('leave room', function(data) {
@@ -70,7 +73,7 @@ io.on('connection', function(socket){
         socket.leave(data.room)
     })
 
-    // new user connecting to the socket
+    // new user connecting to io.socket
     socket.on('new user', function (data) {
         socket.username = data;
         users.push(socket.username);
@@ -123,12 +126,17 @@ io.on('connection', function(socket){
     });
 
     socket.on('seekVideo', function (data) {
-        io.sockets.in(data.roomName.emit('seekVideoClient', data.seekValue));
+        io.sockets.in(data.room.name.emit('seekVideoClient', data.seekValue));
     });
 
     socket.on('syncVideo', function(data) {
         io.sockets.in(data.roomName.emit('syncVideoClient', data));
     });
+
+    socket.on('destroyRoom', function(data) {
+        rooms = rooms.filter(room => room.name !== data.room.name);
+        console.log(`room ${data.room.name} was just destroyed!`)
+    })
 
     socket.on('disconnect', function() {
         console.log('user disconnected', socket.id);
@@ -156,8 +164,10 @@ io.on('connection', function(socket){
         const roomToFind = rooms.find(room => room.roomName === data.roomName);
     })
 
-    function updateUsernames() {
+    // helper
 
+    function addUserToRoom(user, room) {
+        
     }
 })
 
