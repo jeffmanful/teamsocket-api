@@ -90,7 +90,7 @@ io.on('connection', function(socket){
     })
 
 
-    socket.on('removeUserFromRoom', function(room, userId) {
+    socket.on('remove user from room', function(room, userId) {
         io.sockets.in(room).emit('userLeftRoom', userId)
 
         socket.leave(room);
@@ -98,42 +98,41 @@ io.on('connection', function(socket){
         return data;
     })
 
-    socket.on('userLeftRoom', function(userId) {
+    socket.on('user left room', function(userId) {
         return userId
     });
 
-    socket.on('userJoinedRoom', function(data) {
+    socket.on('user joined room', function(data) {
         io.sockets.in(data.roomName).emit(data.username);
         return data.username
     });
 
-    socket.on('userCreatedRoom', function (data) {
+    socket.on('user created room', function (data) {
         io.sockets.in(data.roomName).emit(`${data.username} has created the room`);
     });
 
-
     // Player
-    socket.on('playVideo', function(data) {
+    socket.on('play video', function(data) {
         io.sockets.in(data.roomName.emit('playVideoClient'));
     });
 
-    socket.on('pauseVideo', function(data) {
+    socket.on('pause video', function(data) {
         io.sockets.in(data.roomName.emit('pauseVideoClient'));
     });
 
-    socket.on('stopVideo', function (data) {
+    socket.on('stop video', function (data) {
         io.sockets.in(data.roomName.emit('stopVideoClient'));
     });
 
-    socket.on('seekVideo', function (data) {
+    socket.on('seek video', function (data) {
         io.sockets.in(data.room.name.emit('seekVideoClient', data.seekValue));
     });
 
-    socket.on('syncVideo', function(data) {
+    socket.on('sync video', function(data) {
         io.sockets.in(data.roomName.emit('syncVideoClient', data));
     });
 
-    socket.on('destroyRoom', function(data) {
+    socket.on('destroy room', function(data) {
         rooms = rooms.filter(room => room.name !== data.room.name);
         console.log(`room ${data.room.name} was just destroyed!`)
     })
