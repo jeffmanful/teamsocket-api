@@ -1,7 +1,9 @@
 # Project dependencies
-node_modules
+node_modules/
 .cache/
+yarn-error.log
+package-lock.json
 # Build directory
-Dist/
+dist/
 .DS_Store
 
